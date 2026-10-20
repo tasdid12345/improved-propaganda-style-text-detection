@@ -1,0 +1,33 @@
+{
+  "question": "Can a class-balanced word-plus-character n-gram model with calibrated probabilities beat a standard TF-IDF logistic regression at classifying news-style documents by topic, as a stand-in for flagging propaganda-style articles?",
+  "method": "Pool official 20 Newsgroups train/test subsets (4 categories, headers/footers/quotes removed), stratified 75/25 split with seed 42; compare TF-IDF word-unigram LR (baseline) with class-balanced LR on word 1-2gram + char_wb 3-5gram TF-IDF, C tuned by 5-fold CV on train, isotonic calibration.",
+  "dataset": {
+    "name": "20 Newsgroups (4 categories: alt.atheism, sci.space, comp.graphics, rec.sport.hockey)",
+    "source_url": "https://scikit-learn.org/stable/datasets/real_world.html#the-20-newsgroups-text-dataset",
+    "n_rows": 3758,
+    "n_train": 2818,
+    "n_test": 940,
+    "same_as_paper": false,
+    "baseline_is_papers_method": false
+  },
+  "metric_name": "macro-F1 (test)",
+  "higher_is_better": true,
+  "baseline": "TF-IDF word unigrams (min_df=2, sublinear tf) + logistic regression (default C=1), fit on train.",
+  "improved": "Word 1-2gram + char_wb 3-5gram TF-IDF, class_weight='balanced' logistic regression, C selected from {0.3,1,3,10} by 5-fold CV on train only, isotonic probability calibration.",
+  "metrics": {
+    "baseline_f1": 0.8930599428196326,
+    "baseline_accuracy": 0.8925531914893617,
+    "baseline_brier": 0.25256860065984205,
+    "improved_f1": 0.8998088742056842,
+    "improved_accuracy": 0.9,
+    "improved_brier": 0.14015198235874118,
+    "baseline_score": 0.8930599428196326,
+    "improved_score": 0.8998088742056842,
+    "improvement": 0.006748931386051593,
+    "improvement_accuracy": 0.007446808510638281,
+    "improvement_brier": 0.11241661830110086,
+    "cv_best_C": 10.0,
+    "cv_macro_f1": 0.9070429685562802
+  },
+  "notes": "Stand-in dataset: topical newsgroup posts, not Serbian propaganda; results do not transfer directly. The official test subset is ~40% of the data, outside the 20-30% test-size rule, so both official subsets were pooled and re-split once (stratified, seed 42). Both models are deterministic given the seed (lbfgs LR, fixed CV folds), so a single run is reported without seed std. Brier is the multiclass Brier score (sum over classes, mean over documents; range 0-2). The test set was used once per model; C was selected only by training-set CV. Single split, so differences of a few points may be within sampling noise."
+}
